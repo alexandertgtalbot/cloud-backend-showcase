@@ -27,6 +27,9 @@ jobs:
     - name: cargo_fmt
       run: cargo fmt --verbose --all -- --check
 
+    - name: cargo_audit
+      run: cargo audit
+
   # cargo_bloat:
   #   defaults:
   #     run:
