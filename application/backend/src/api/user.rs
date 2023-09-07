@@ -8,6 +8,14 @@
 // - Update User by name (PUT).
 // - Delete User by name (DELETE).
 
+use crate::models::user::User;
+use crate::repository::Engine;
+use actix_web::{
+    delete, get, put,
+    web::{Data, Json, Path},
+    HttpResponse, HttpResponseBuilder,
+};
+
 #[put("/{username}")]
 async fn create_user(
     db: Data<Engine>,

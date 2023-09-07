@@ -14,7 +14,7 @@ use crate::repository::{Repository, RepositoryError};
 
 pub struct SurrealdbRepository {
     config: std::sync::Arc<crate::configs::Config>,
-    db: None,
+    db: surrealdb::Surreal<surrealdb::engine::local::Db>,
 }
 
 impl SurrealdbRepository {
@@ -33,10 +33,7 @@ impl Repository for SurrealdbRepository {
         todo!()
     }
 
-    async fn get_user(
-        &self,
-        username: String,
-    ) -> Result<User, RepositoryError> {
+    async fn get_user(&self, username: String) -> Result<User, RepositoryError> {
         todo!()
     }
 
@@ -48,10 +45,7 @@ impl Repository for SurrealdbRepository {
         todo!()
     }
 
-    async fn delete_user(
-        &self,
-        username: String,
-    ) -> Result<User, RepositoryError> {
+    async fn delete_user(&self, username: String) -> Result<User, RepositoryError> {
         todo!()
     }
 }
