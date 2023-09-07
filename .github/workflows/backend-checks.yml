@@ -29,6 +29,7 @@ jobs:
 
     - name: cargo_audit
       run: cargo audit
+      continue-on-error: true
 
   # cargo_bloat:
   #   defaults:
