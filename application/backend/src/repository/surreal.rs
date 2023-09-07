@@ -13,12 +13,12 @@ use crate::models::user::User;
 use crate::repository::{Repository, RepositoryError};
 
 pub struct SurrealdbRepository {
-    config: std::sync::Arc<crate::configs::Config>,
-    db: surrealdb::Surreal<surrealdb::engine::local::Db>,
+    _config: std::sync::Arc<crate::configs::Config>,
+    _db: surrealdb::Surreal<surrealdb::engine::local::Db>,
 }
 
 impl SurrealdbRepository {
-    pub async fn init(config: std::sync::Arc<crate::configs::Config>) -> Self {
+    pub async fn init(_config: std::sync::Arc<crate::configs::Config>) -> Self {
         todo!()
     }
 }
@@ -27,25 +27,25 @@ impl SurrealdbRepository {
 impl Repository for SurrealdbRepository {
     async fn create_user(
         &self,
-        username: String,
-        user_data: User,
+        _username: String,
+        _user_data: User,
     ) -> Result<User, RepositoryError> {
         todo!()
     }
 
-    async fn get_user(&self, username: String) -> Result<User, RepositoryError> {
+    async fn get_user(&self, _username: String) -> Result<User, RepositoryError> {
         todo!()
     }
 
     async fn update_user(
         &self,
-        username: String,
-        user_data: User,
+        _username: String,
+        _user_data: User,
     ) -> Result<User, RepositoryError> {
         todo!()
     }
 
-    async fn delete_user(&self, username: String) -> Result<User, RepositoryError> {
+    async fn delete_user(&self, _username: String) -> Result<User, RepositoryError> {
         todo!()
     }
 }

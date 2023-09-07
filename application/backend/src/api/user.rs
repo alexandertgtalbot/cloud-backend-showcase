@@ -18,19 +18,19 @@ use actix_web::{
 
 #[put("/{username}")]
 async fn create_user(
-    db: Data<Engine>,
-    path: Path<String>,
-    payload: Json<User>,
+    _db: Data<Engine>,
+    _path: Path<String>,
+    _payload: Json<User>,
 ) -> HttpResponseBuilder {
     todo!()
 }
 
 #[get("/{username}")]
-async fn get_user(db: Data<Engine>, path: Path<String>) -> HttpResponseBuilder {
+async fn get_user(_db: Data<Engine>, _path: Path<String>) -> HttpResponseBuilder {
     todo!()
 }
 
 #[delete("/{username}")]
-async fn delete_user(db: Data<Engine>, path: Path<String>) -> HttpResponse {
+async fn delete_user(_db: Data<Engine>, _path: Path<String>) -> HttpResponse {
     todo!()
 }
