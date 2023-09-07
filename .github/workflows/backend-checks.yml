@@ -1,0 +1,44 @@
+name: Backend Checks
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  check:
+    defaults:
+      run:
+        working-directory: ./application/backend
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: cargo_check
+      run: cargo check --verbose
+
+    - name: cargo_clippy
+      run: cargo clippy --verbose --all-targets --all-features -- -D warnings
+
+    - name: cargo_fmt
+      run: cargo fmt --verbose --all -- --check
+
+  # cargo_bloat:
+  #   defaults:
+  #     run:
+  #       working-directory: ./application/backend
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Install Rust
+  #       uses: actions-rs/toolchain@v1
+  #       with:
+  #         toolchain: stable
+  #     - name: Run cargo bloat
+  #       uses: orf/cargo-bloat-action@v1
+  #       with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
