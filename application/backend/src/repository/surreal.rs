@@ -103,7 +103,19 @@ impl Repository for SurrealdbRepository {
         }
     }
 
-    async fn delete_user(&self, _username: String) -> Result<User, RepositoryError> {
-        todo!()
+    async fn delete_user(&self, username: String) -> Result<(), RepositoryError> {
+        self.db
+            .use_ns(self.config.repository.namespace.as_str())
+            .use_db(self.config.repository.database.as_str())
+            .await?;
+
+        let result: Option<Record> = self.db.delete(("user", &username)).await?;
+
+        match result {
+            Some(_) => Ok(()),
+            None => Err(RepositoryError::Unavailable(
+                "Failed to update user".to_string(),
+            )),
+        }
     }
 }

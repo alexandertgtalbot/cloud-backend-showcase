@@ -33,7 +33,7 @@ pub trait Repository {
     async fn update_user(&self, username: String, user_data: User)
         -> Result<User, RepositoryError>;
 
-    async fn delete_user(&self, username: String) -> Result<User, RepositoryError>;
+    async fn delete_user(&self, username: String) -> Result<(), RepositoryError>;
 }
 
 impl Engine {
@@ -73,7 +73,7 @@ impl Engine {
         }
     }
 
-    pub async fn delete_user(&self, username: String) -> Result<User, RepositoryError> {
+    pub async fn delete_user(&self, username: String) -> Result<(), RepositoryError> {
         match self {
             Engine::Surrealdb(db) => db.delete_user(username).await,
         }

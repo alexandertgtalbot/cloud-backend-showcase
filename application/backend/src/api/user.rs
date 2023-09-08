@@ -59,6 +59,15 @@ async fn get_user(_db: Data<Engine>, _path: Path<String>) -> HttpResponseBuilder
 }
 
 #[delete("/{username}")]
-async fn delete_user(_db: Data<Engine>, _path: Path<String>) -> HttpResponse {
-    todo!()
+async fn delete_user(db: Data<Engine>, path: Path<String>) -> HttpResponseBuilder {
+    let username = path.into_inner();
+
+    match db.delete_user(username.clone()).await {
+        Ok(_) => HttpResponse::NoContent(),
+        Err(error) => match error {
+            NotFound(_) => HttpResponse::NotFound(),
+            Unavailable(_) => HttpResponse::ServiceUnavailable(),
+            _ => HttpResponse::InternalServerError(),
+        },
+    }
 }
