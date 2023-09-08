@@ -2,14 +2,44 @@
 //
 // Summary: User model.
 
+use lazy_static::lazy_static;
+use regex::Regex;
 use serde::{Deserialize, Serialize};
-use validator::Validate;
+use validator::{Validate, ValidationError};
+
+lazy_static! {
+    static ref ISO_8601_DATE: Regex = Regex::new(r"^\d{4}-\d{2}-\d{2}$").unwrap();
+}
 
 #[derive(Clone, Debug, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct User {
+    #[validate(regex = "ISO_8601_DATE")]
+    #[validate(custom = "validate_date_of_birth")]
     pub date_of_birth: String,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(custom = "validate_username")]
     pub username: Option<String>,
+}
+
+fn validate_date_of_birth(date_of_birth: &str) -> Result<(), ValidationError> {
+    let parsed_date = chrono::naive::NaiveDate::parse_from_str(date_of_birth, "%F");
+    if parsed_date.is_ok() && parsed_date.unwrap() < chrono::Utc::now().date_naive() {
+        return Ok(());
+    }
+    Err(ValidationError::new(
+        "Date of birth should have the format YYYY-MM-DD and be in the past",
+    ))
+}
+
+fn validate_username(username: &str) -> Result<(), ValidationError> {
+    if username.chars().all(char::is_alphabetic) && !username.is_empty() {
+        return Ok(());
+    }
+    Err(ValidationError::new(
+        "The username should only contain alphabetic characters",
+    ))
 }
 
 #[cfg(test)]
