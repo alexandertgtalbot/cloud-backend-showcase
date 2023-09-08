@@ -26,14 +26,12 @@ pub trait Repository {
     async fn create_user(&self, username: String, user_data: User)
         -> Result<User, RepositoryError>;
 
-    async fn get_user(&self, username: String)
-        -> Result<User, RepositoryError>;
+    async fn get_user(&self, username: String) -> Result<User, RepositoryError>;
 
     async fn update_user(&self, username: String, user_data: User)
         -> Result<User, RepositoryError>;
 
-    async fn delete_user(&self, username: String)
-        -> Result<User, RepositoryError>;
+    async fn delete_user(&self, username: String) -> Result<User, RepositoryError>;
 }
 
 impl Engine {
@@ -57,12 +55,9 @@ impl Engine {
         }
     }
 
-    pub async fn get_user(
-        &self,
-        username: String,
-    ) -> Result<User, RepositoryError> {
+    pub async fn get_user(&self, username: String) -> Result<User, RepositoryError> {
         match self {
-            Engine::Surrealdb(db) => db.update_user(username).await,
+            Engine::Surrealdb(db) => db.get_user(username).await,
         }
     }
 
@@ -76,12 +71,9 @@ impl Engine {
         }
     }
 
-    pub async fn delete_user(
-        &self,
-        username: String,
-    ) -> Result<User, RepositoryError> {
+    pub async fn delete_user(&self, username: String) -> Result<User, RepositoryError> {
         match self {
-            Engine::Surrealdb(db) => db.update_user(username).await,
+            Engine::Surrealdb(db) => db.delete_user(username).await,
         }
     }
 }
