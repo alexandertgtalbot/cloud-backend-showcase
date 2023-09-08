@@ -53,10 +53,26 @@ impl From<surrealdb::Error> for RepositoryError {
 impl Repository for SurrealdbRepository {
     async fn create_user(
         &self,
-        _username: String,
-        _user_data: User,
+        username: String,
+        user_data: User,
     ) -> Result<User, RepositoryError> {
-        todo!()
+        self.db
+            .use_ns(self.config.repository.namespace.as_str())
+            .use_db(self.config.repository.database.as_str())
+            .await?;
+
+        let result: Option<Record> = self
+            .db
+            .create(("user", &username))
+            .content(&user_data)
+            .await?;
+
+        match result {
+            Some(_) => Ok(user_data),
+            None => Err(RepositoryError::Unavailable(
+                "Failed to create user".to_string(),
+            )),
+        }
     }
 
     async fn get_user(&self, _username: String) -> Result<User, RepositoryError> {
