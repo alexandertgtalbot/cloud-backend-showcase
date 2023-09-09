@@ -61,7 +61,7 @@ async fn get_user(db: Data<Engine>, path: Path<String>) -> HttpResponse {
 
     match db.get_user(username.clone()).await {
         Ok(user) => {
-            let days_till_birthday = user.days_till_birthday().clone();
+            let days_till_birthday = user.days_till_birthday();
             if days_till_birthday == 0 {
                 HttpResponse::Ok()
                     .content_type(ContentType::json())
