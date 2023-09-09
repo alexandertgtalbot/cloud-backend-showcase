@@ -2,6 +2,7 @@
 //
 // Summary: User model.
 
+use chrono::Datelike;
 use lazy_static::lazy_static;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
@@ -40,6 +41,34 @@ fn validate_username(username: &str) -> Result<(), ValidationError> {
     Err(ValidationError::new(
         "The username should only contain alphabetic characters",
     ))
+}
+
+impl User {
+    pub fn days_till_birthday(&self) -> i64 {
+        let date_of_birth =
+            chrono::naive::NaiveDate::parse_from_str(&self.date_of_birth, "%F").unwrap();
+
+        let today = chrono::Utc::now().date_naive();
+
+        let birthday_this_year = chrono::naive::NaiveDate::from_ymd_opt(
+            today.year(),
+            date_of_birth.month(),
+            date_of_birth.day(),
+        )
+        .unwrap();
+
+        if birthday_this_year < today {
+            let birthday_next_year = chrono::naive::NaiveDate::from_ymd_opt(
+                today.year() + 1,
+                date_of_birth.month(),
+                date_of_birth.day(),
+            )
+            .unwrap();
+            dbg!((birthday_next_year - today).num_days());
+            return (birthday_next_year - today).num_days();
+        }
+        (birthday_this_year - today).num_days()
+    }
 }
 
 #[cfg(test)]
