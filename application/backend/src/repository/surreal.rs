@@ -75,8 +75,20 @@ impl Repository for SurrealdbRepository {
         }
     }
 
-    async fn get_user(&self, _username: String) -> Result<User, RepositoryError> {
-        todo!()
+    async fn get_user(&self, username: String) -> Result<User, RepositoryError> {
+        self.db
+            .use_ns(self.config.repository.namespace.as_str())
+            .use_db(self.config.repository.database.as_str())
+            .await?;
+
+        let user: Option<User> = self.db.select(("user", &username)).await?;
+
+        match user {
+            Some(user) => Ok(user),
+            None => Err(RepositoryError::Unavailable(
+                "Failed to create user".to_string(),
+            )),
+        }
     }
 
     async fn update_user(
