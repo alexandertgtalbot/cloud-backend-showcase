@@ -13,7 +13,9 @@ use crate::repository::Engine;
 use crate::repository::RepositoryError::{Duplicate, NotFound, Unavailable};
 
 use actix_web::{
-    delete, get, put,
+    delete, get,
+    http::header::ContentType,
+    put,
     web::{Data, Json, Path},
     HttpResponse, HttpResponseBuilder,
 };
@@ -54,8 +56,34 @@ async fn create_user(
 }
 
 #[get("/{username}")]
-async fn get_user(_db: Data<Engine>, _path: Path<String>) -> HttpResponseBuilder {
-    todo!()
+async fn get_user(db: Data<Engine>, path: Path<String>) -> HttpResponse {
+    let username = path.into_inner();
+
+    match db.get_user(username.clone()).await {
+        Ok(user) => {
+            let days_till_birthday = user.days_till_birthday().clone();
+            if days_till_birthday == 0 {
+                HttpResponse::Ok()
+                    .content_type(ContentType::json())
+                    .body(format!(
+                        "{{\"message\":\"Hello, {}! Happy birthday!\"}}",
+                        username
+                    ))
+            } else {
+                HttpResponse::Ok()
+                    .content_type(ContentType::json())
+                    .body(format!(
+                        "{{\"message\":\"Hello, {}! Your birthday is in {} day(s)\"}}",
+                        username, days_till_birthday
+                    ))
+            }
+        }
+        Err(error) => match error {
+            NotFound(_) => HttpResponse::NotFound().finish(),
+            Unavailable(_) => HttpResponse::ServiceUnavailable().finish(),
+            _ => HttpResponse::InternalServerError().finish(),
+        },
+    }
 }
 
 #[delete("/{username}")]
