@@ -12,10 +12,12 @@
 
 #[cfg(test)]
 mod integration {
+    use actix_web::web::Bytes;
     use actix_web::{http::header::ContentType, middleware, test, web, App};
     use backend::api::user::{create_user, delete_user, get_user};
     use backend::configs::Config;
     use backend::models::user::User;
+    use chrono::{Datelike, Months};
     use envconfig::Envconfig;
     use std::sync::Arc;
 
@@ -70,14 +72,26 @@ mod integration {
                 .wrap(middleware::Logger::new("%a %{User-Agent}i"))
                 .wrap(middleware::NormalizePath::trim())
                 .app_data(repository_data.clone())
-                .service(web::scope("/hello").service(get_user)),
+                .service(web::scope("/hello").service(create_user).service(get_user)),
         )
         .await;
+
+        let date_today = chrono::Utc::now().date_naive();
+
+        // Set the date of birth to last year where the birthday for this year will be the following month.
+        let date_of_birth_last_year = chrono::naive::NaiveDate::from_ymd_opt(
+            date_today.year() - 1,
+            date_today.month(),
+            date_today.day(),
+        )
+        .unwrap()
+        .checked_add_months(Months::new(1))
+        .unwrap();
 
         // Instantiate test user data.
         let username = String::from("test");
         let user_data = User {
-            date_of_birth: String::from("2023-09-05"),
+            date_of_birth: date_of_birth_last_year.format("%F").to_string(),
             username: None,
         };
 
@@ -106,10 +120,16 @@ mod integration {
             .to_request();
         let get_response = test::call_service(&app, request).await;
         assert_eq!(get_response.status().as_u16(), 200);
-        let response_body = test::read_body(get_response).await;
+        // let response_body: web::Json<Bytes> = test::read_body(get_response).await;
+        let response_body: Bytes = test::read_body(get_response).await;
+        let response: String = String::from_utf8(response_body.to_vec()).unwrap();
         assert_eq!(
-            response_body,
-            "{\"message\":\"Hello, test! Your birthday is in N day(s)\"}".to_string()
+            response,
+            format!(
+                "{{\"message\":\"Hello, {}! Your birthday is in {} day(s)\"}}",
+                username,
+                user_data.days_till_birthday()
+            )
         );
     }
 
@@ -125,14 +145,24 @@ mod integration {
                 .wrap(middleware::Logger::new("%a %{User-Agent}i"))
                 .wrap(middleware::NormalizePath::trim())
                 .app_data(repository_data.clone())
-                .service(web::scope("/hello").service(get_user)),
+                .service(web::scope("/hello").service(create_user).service(get_user)),
         )
         .await;
+
+        let date_today = chrono::Utc::now().date_naive();
+
+        // Set the date of birth to last year on this day.
+        let date_of_birth_last_year = chrono::naive::NaiveDate::from_ymd_opt(
+            date_today.year() - 1,
+            date_today.month(),
+            date_today.day(),
+        )
+        .unwrap();
 
         // Instantiate test user data.
         let username = String::from("test");
         let user_data = User {
-            date_of_birth: String::from("2023-09-05"),
+            date_of_birth: date_of_birth_last_year.format("%F").to_string(),
             username: None,
         };
 
@@ -161,10 +191,12 @@ mod integration {
             .to_request();
         let get_response = test::call_service(&app, request).await;
         assert_eq!(get_response.status().as_u16(), 200);
-        let response_body = test::read_body(get_response).await;
+        // let response_body: web::Json<Bytes> = test::read_body(get_response).await;
+        let response_body: Bytes = test::read_body(get_response).await;
+        let response: String = String::from_utf8(response_body.to_vec()).unwrap();
         assert_eq!(
-            response_body,
-            "{\"message\":\"Hello, test! Happy birthday!\"}".to_string()
+            response,
+            format!("{{\"message\":\"Hello, {}! Happy birthday!\"}}", username)
         );
     }
 
