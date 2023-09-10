@@ -1,0 +1,55 @@
+provider "aws" {
+%{ if can(args.iam_role) }
+  assume_role {
+    role_arn = "${args.iam_role}"
+  }
+  %{~ endif }
+
+  default_tags {
+    tags = {
+      %{ for tag_name, tag_value in args.tags }
+        ${tag_name} = "${tag_value}"
+      %{~ endfor }
+    }
+  }
+
+  region = "${args.region}"
+}
+
+%{ if can(args.eks) }
+provider "kubernetes" {
+  host                   = "${args.eks.cluster_endpoint}"
+  cluster_ca_certificate = base64decode("${args.eks.cluster_certificate_authority_data}")
+
+  exec {
+    command     = "aws"
+    api_version = "client.authentication.k8s.io/v1beta1"
+
+    args = [
+      "eks",
+      "get-token",
+      "--cluster-name", "${args.eks.cluster_name}",
+      "--profile", "${args.profile}"
+    ]
+  }
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = "${args.eks.cluster_endpoint}"
+    cluster_ca_certificate = base64decode("${args.eks.cluster_certificate_authority_data}")
+
+    exec {
+      api_version = "client.authentication.k8s.io/v1beta1"
+      command     = "aws"
+
+      args = [
+        "eks",
+        "get-token",
+        "--cluster-name",  "${args.eks.cluster_name}",
+        "--profile", "${args.profile}"
+      ]
+    }
+  }
+}
+%{~ endif }

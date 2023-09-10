@@ -1,0 +1,14 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "= ${args.provider_version.aws}"
+    }
+    null = {
+      source  = "hashicorp/null"
+      version = "= ${args.provider_version.null}"
+    }
+  }
+
+  required_version = "= ${args.terraform_version}"
+}
