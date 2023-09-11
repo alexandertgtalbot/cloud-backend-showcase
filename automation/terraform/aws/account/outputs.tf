@@ -1,5 +1,5 @@
 output "email" {
-  value = var.name
+  value = var.email
 }
 
 output "id" {
