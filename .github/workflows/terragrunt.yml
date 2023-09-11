@@ -73,5 +73,6 @@ jobs:
           tf_actions_working_dir: ${{ env.TF_WORKING_DIR }}
           tf_actions_comment: true
         env:
+
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_BRANCH: ${{ steps.vars.outputs.branch }}
