@@ -18,6 +18,11 @@ locals {
   account_name = uuid()
 }
 
+dependency "parent_ou" {
+  config_path  = "../"
+  skip_outputs = false
+}
+
 generate "providers" {
   contents  = templatefile(find_in_parent_folders("providers.tftpl"), { args = local })
   path      = "providers.tf"
@@ -29,5 +34,7 @@ terraform {
 }
 
 inputs = {
-  name = local.uuid()
+  email     = "${local.account_name}@${local.domain}"
+  name      = local.account_name
+  parent_id = dependency.parent_ou.outputs.id
 }
