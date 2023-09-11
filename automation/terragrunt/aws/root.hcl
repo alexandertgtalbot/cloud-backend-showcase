@@ -28,6 +28,7 @@ locals {
 
   module_version = {
     ou      = "git::git@github.com:alexandertgtalbot/cloud-backend-showcase.git//automation/terraform/aws/ou?ref=main"
+    account = "git::git@github.com:alexandertgtalbot/cloud-backend-showcase.git//automation/terraform/aws/account?ref=main"
   }
 }
 
