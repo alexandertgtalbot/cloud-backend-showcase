@@ -1,0 +1,41 @@
+{
+    "tags": {
+        "Environment": {
+            "tag_key": {
+                "@@assign": "environment",
+                "@@operators_allowed_for_child_policies": [
+                    "@@none"
+                ]
+            },
+            "tag_value": {
+                "@@assign": [
+                    "development",
+                    "production",
+                    "quarantine",
+                    "stage"
+                ]
+            }
+        },
+        "Project": {
+            "tag_key": {
+                "@@assign": "project",
+                "@@operators_allowed_for_child_policies": [
+                    "@@none"
+                ]
+            }
+        },
+        "Team": {
+            "tag_key": {
+                "@@assign": "team",
+                "@@operators_allowed_for_child_policies": [
+                    "@@none"
+                ]
+            },
+            "tag_value": {
+                "@@assign": [
+                    "platform"
+                ]
+            }
+        }
+    }
+}
