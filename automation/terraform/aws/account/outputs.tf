@@ -7,7 +7,7 @@ output "id" {
 }
 
 output "name" {
-  value = local.email
+  value = local.name
 }
 
 output "role_name" {
