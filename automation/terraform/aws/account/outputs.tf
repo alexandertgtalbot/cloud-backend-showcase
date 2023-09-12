@@ -1,5 +1,5 @@
 output "email" {
-  value = var.email
+  value = local.email
 }
 
 output "id" {
@@ -7,7 +7,7 @@ output "id" {
 }
 
 output "name" {
-  value = var.name
+  value = local.email
 }
 
 output "role_name" {

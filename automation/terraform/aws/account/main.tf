@@ -2,10 +2,17 @@
 * # Proof of Concept AWS Account Module
 */
 
+locals {
+  email = var.email == "" ? "${random_uuid.name.id}@${var.domain}" : var.email
+  name  = var.name == "" ? random_uuid.name.id : var.name
+}
+
+resource "random_uuid" "name" {}
+
 resource "aws_organizations_account" "this" {
-  email                      = var.email
+  email                      = local.email
   iam_user_access_to_billing = var.billing_access
-  name                       = replace(lower(var.name), " ", "-")
+  name                       = local.name
   parent_id                  = var.parent_id
   role_name                  = var.role_name
 
