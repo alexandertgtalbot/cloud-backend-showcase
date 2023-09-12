@@ -8,12 +8,19 @@ variable "billing_access" {
   }
 }
 
+variable "domain" {
+  type    = string
+  default = ""
+}
+
 variable "email" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "name" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "parent_id" {
