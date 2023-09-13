@@ -18,6 +18,9 @@
 		}
 	},
 	"mounts": [
-		"source=~/.ssh,target=/root/.ssh,type=bind,consistency=cached"
+		"source=~/.aws,target=/root/.aws,type=bind,consistency=cached",
+		"source=~/.ssh,target=/root/.ssh,type=bind,consistency=cached",
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}\\.profile,target=/root/.profile,type=bind,consistency=cached",
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}\\.zshrc,target=/root/.zshrc,type=bind,consistency=cached"
 	]
 }
