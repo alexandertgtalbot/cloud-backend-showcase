@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- istio/istio-base-crds.yaml
+- istio/istio-base.yaml
+- istio/istio-ingressgateway.yaml
+- istio/istio-namespace.yaml
+- istio/istio-pilot-filters.yaml
+- istio/istio-pilot.yaml
+- istio/istio-sidecar.yaml
+- aws-load-balancer-controller.yaml
+- cert-manager.yaml

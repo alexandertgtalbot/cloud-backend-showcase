@@ -1,0 +1,58 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: aws-load-balancer-controller
+
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: eks-charts
+  namespace: aws-load-balancer-controller
+spec:
+  interval: 60m0s
+  url: https://aws.github.io/eks-charts
+
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: aws-load-balancer-controller
+  namespace: aws-load-balancer-controller
+spec:
+  chart:
+    spec:
+      chart: aws-load-balancer-controller
+      sourceRef:
+        kind: HelmRepository
+        name: eks-charts
+        namespace: aws-load-balancer-controller
+      version: 1.4.8
+
+  interval: 1m0s
+
+  # Configuration options for the Helm rollback action
+  rollback:
+    timeout: 5m
+    disableWait: false
+    disableHooks: false
+    recreate: false
+    force: false
+    cleanupOnFail: false
+
+  upgrade:
+    # Remediaton configuration for when an Helm upgrade action fails
+    remediation:
+      # Amount of retries to attempt after a failure,
+      # setting this to 0 means no remedation will be
+      # attempted
+      retries: 5
+
+  values:
+    clusterName: eks
+    replicaCount: 1
+    serviceAccount:
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::531470700410:role/aws-service-role/elasticloadbalancing.amazonaws.com/AWSServiceRoleForElasticLoadBalancing
+        # calm.the.masses: https://www.lastweekinaws.com/blog/are-aws-account-ids-sensitive-information/
