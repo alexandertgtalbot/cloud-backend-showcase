@@ -30,7 +30,9 @@ jobs:
   #     run: cargo audit
   #     continue-on-error: true
 
-  docker-build-and-publish:
+  docker-build-and-publish-stage:
+    environment:
+      name: showcase-stage
     name: Docker Build and Publish
     defaults:
       run:
@@ -49,23 +51,19 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push
-        environment:
-          name: showcase-stage
         uses: docker/build-push-action@v4
         with:
           context: ./application/backend
           push: false
-          tags: ${{ secrets.STAGE_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/backend:v0.1.0
+          tags: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/backend:v0.1.0
       - name: Push to ECR Stage
         id: push-to-ecr-stage
-        environment:
-          name: showcase-stage
         uses: jwalton/gh-ecr-push@v1
         with:
           access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
           region: us-east-2
-          image: ${{ secrets.STAGE_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/backend:v0.1.0
+          image: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/backend:v0.1.0
 
   # code-coverage:
   #   name: Code Coverage
