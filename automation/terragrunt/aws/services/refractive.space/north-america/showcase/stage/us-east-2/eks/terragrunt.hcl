@@ -1,6 +1,3 @@
-# include "environment" {
-#   path = find_in_parent_folders("eks.hcl")
-# }
 include "environment" {
   path ="${get_path_to_repo_root()}/automation/terragrunt/aws/includes/services.eks.hcl"
 }

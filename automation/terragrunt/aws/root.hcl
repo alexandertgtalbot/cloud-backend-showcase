@@ -31,8 +31,10 @@ locals {
 
   module_version = {
     account       = "git::git@github.com:alexandertgtalbot/cloud-backend-showcase.git//automation/terraform/aws/account?ref=main"
+    ecr           = "tfr:///terraform-aws-modules/ecr/aws?version=1.6.0"
     eks           = "tfr:///terraform-aws-modules/eks/aws?version=19.10.0"
     eks_bootstrap = "git::git@github.com:alexandertgtalbot/cloud-backend-showcase.git//automation/terraform/aws/eks_bootstrap?ref=main"
+    iam_user      = "tfr:///terraform-aws-modules/iam/aws//modules/iam-user?version=5.30.0"
     ou            = "git::git@github.com:alexandertgtalbot/cloud-backend-showcase.git//automation/terraform/aws/ou?ref=main"
   }
 }
