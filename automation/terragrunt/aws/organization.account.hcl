@@ -2,11 +2,12 @@ locals {
   # Get general variables.
   root_vars         = read_terragrunt_config(find_in_parent_folders("root.hcl"))
   domain            = local.root_vars.locals.domain
-  region            = local.root_vars.locals.region
-  root_ou_id        = local.root_vars.locals.root_ou_id
-  tags              = local.root_vars.locals.tags
   module_version    = local.root_vars.locals.module_version
   provider_version  = local.root_vars.locals.provider_version
+  region            = local.root_vars.locals.default_region
+  resource_prefix   = local.root_vars.locals.resource_prefix
+  root_ou_id        = local.root_vars.locals.root_ou_id
+  tags              = local.root_vars.locals.tags
   terraform_version = local.root_vars.locals.terraform_version
 
   # Get environmental identifiers from parent directories.
@@ -29,12 +30,26 @@ generate "providers" {
   if_exists = "overwrite"
 }
 
+remote_state {
+  backend = "s3"
+  config = {
+    acl            = "private"
+    bucket         = "${local.resource_prefix}-terraform-state"
+    dynamodb_table = "${local.resource_prefix}-terraform-state-locks"
+    encrypt        = true
+    key            = "${path_relative_to_include()}/terraform.tfstate"
+    region         = "${local.region}"
+  }
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite_terragrunt"
+  }
+}
+
 terraform {
   source = local.module_version.account
 }
 
 inputs = {
-  email     = "${local.account_name}@${local.domain}"
-  name      = local.account_name
   parent_id = dependency.parent_ou.outputs.id
 }

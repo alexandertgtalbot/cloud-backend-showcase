@@ -1,7 +1,8 @@
 locals {
   # Get required variables from the root module.
   root_vars         = read_terragrunt_config(find_in_parent_folders("root.hcl"))
-  region            = local.root_vars.locals.region
+  region            = local.root_vars.locals.default_region
+  resource_prefix   = local.root_vars.locals.resource_prefix
   root_ou_id        = local.root_vars.locals.root_ou_id
   tags              = local.root_vars.locals.tags
   module_version    = local.root_vars.locals.module_version
@@ -19,6 +20,22 @@ generate "providers" {
   contents  = templatefile(find_in_parent_folders("providers.tftpl"), { args = local })
   path      = "providers.tf"
   if_exists = "overwrite"
+}
+
+remote_state {
+  backend = "s3"
+  config = {
+    acl            = "private"
+    bucket         = "${local.resource_prefix}-terraform-state"
+    dynamodb_table = "${local.resource_prefix}-terraform-state-locks"
+    encrypt        = true
+    key            = "${path_relative_to_include()}/terraform.tfstate"
+    region         = "${local.region}"
+  }
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite_terragrunt"
+  }
 }
 
 terraform {
