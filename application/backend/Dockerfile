@@ -8,6 +8,7 @@ COPY ./Cargo.toml ./Cargo.toml
 RUN cargo build --release
 RUN rm src/*.rs
 COPY ./src ./src
+
 RUN cargo build --release --bin backend
 
 FROM gcr.io/distroless/cc AS runtime
