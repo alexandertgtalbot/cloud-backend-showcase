@@ -13,62 +13,29 @@ env:
   CARGO_MANIFEST_DIR: ${{ github.workspace }}/application/backend/Cargo.toml
 
 jobs:
-  # code-validation:
-  #   name: Code Validation
-  #   defaults:
-  #     run:
-  #       working-directory: ./application/backend
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #   - name: cargo_check
-  #     run: cargo check --verbose
-  #   - name: cargo_clippy
-  #     run: cargo clippy --verbose --all-targets --all-features -- -D warnings
-  #   - name: cargo_fmt
-  #     run: cargo fmt --verbose --all -- --check
-  #   - name: cargo_audit
-  #     run: cargo audit
-  #     continue-on-error: true
+  code-validation:
+    name: Code Validation
+    defaults:
+      run:
+        working-directory: ./application/backend
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: cargo_check
+      run: cargo check --verbose
+    - name: cargo_clippy
+      run: cargo clippy --verbose --all-targets --all-features -- -D warnings
+    - name: cargo_fmt
+      run: cargo fmt --verbose --all -- --check
+    - name: cargo_audit
+      run: cargo audit
+      continue-on-error: true
 
-  # docker-build-and-publish-development:
-  #   environment:
-  #     name: showcase-development
-  #   name: Docker Build and Publish Development
-  #   # needs: code-validation
-  #   defaults:
-  #     run:
-  #       working-directory: ./application/backend
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #     - name: Set up QEMU
-  #       uses: docker/setup-qemu-action@v2
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v2
-  #     - name: Build
-  #       uses: docker/build-push-action@v4
-  #       with:
-  #         context: ./application/backend
-  #         load: true
-  #         push: false
-  #         tags: backend:v0.1.0
-  #     - name: Push to ECR
-  #       id: push-to-ecr
-  #       uses: jwalton/gh-ecr-push@v1
-  #       with:
-  #         access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
-  #         secret-access-key: ${{ secrets.ECR_AWS_ACCESS_KEY_SECRET }}
-  #         region: us-east-2
-  #         local-image: backend:v0.1.0
-  #         image: backend:v0.1.0
-
-  docker-build-and-publish-stage:
+  docker-build-and-publish-development:
     environment:
-      name: showcase-stage
-    name: Docker Build and Publish Stage
-    # needs: docker-build-and-publish-development
+      name: showcase-development
+    name: Docker Build and Publish Development
+    needs: code-validation
     defaults:
       run:
         working-directory: ./application/backend
@@ -97,78 +64,95 @@ jobs:
           local-image: backend:v0.1.0
           image: backend:v0.1.0
 
-  # docker-build-and-publish-production:
-  #   environment:
-  #     name: showcase-production
-  #   name: Docker Build and Publish Production
-  #   needs: docker-build-and-publish-stage
-  #   defaults:
-  #     run:
-  #       working-directory: ./application/backend
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #     - name: Set up QEMU
-  #       uses: docker/setup-qemu-action@v2
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v2
-  #     - name: Build
-  #       uses: docker/build-push-action@v4
-  #       with:
-  #         context: ./application/backend
-  #         load: true
-  #         push: false
-  #         tags: backend:v0.1.0
-  #     - name: Push to ECR
-  #       id: push-to-ecr
-  #       uses: jwalton/gh-ecr-push@v1
-  #       with:
-  #         access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
-  #         secret-access-key: ${{ secrets.ECR_AWS_ACCESS_KEY_SECRET }}
-  #         region: us-east-2
-  #         local-image: backend:v0.1.0
-  #         image: backend:v0.1.0
+  docker-build-and-publish-stage:
+    environment:
+      name: showcase-stage
+    name: Docker Build and Publish Stage
+    needs: docker-build-and-publish-development
+    defaults:
+      run:
+        working-directory: ./application/backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Build
+        uses: docker/build-push-action@v4
+        with:
+          context: ./application/backend
+          load: true
+          push: false
+          tags: backend:v0.1.0
+      - name: Push to ECR
+        id: push-to-ecr
+        uses: jwalton/gh-ecr-push@v1
+        with:
+          access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.ECR_AWS_ACCESS_KEY_SECRET }}
+          region: us-east-2
+          local-image: backend:v0.1.0
+          image: backend:v0.1.0
 
-  # code-coverage:
-  #   name: Code Coverage
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Run cargo-tarpaulin
-  #       run: env
-  #     - name: Install stable toolchain
-  #       uses: actions-rs/toolchain@v1
-  #       with:
-  #         toolchain: stable
-  #         override: true
-  #     - name: Run cargo-tarpaulin
-  #       uses: actions-rs/tarpaulin@v0.1.3
-  #       with:
-  #         version: '0.15.0'
-  #         args: '--root ${{ github.workspace }}/application/backend --manifest-path ${{ github.workspace }}/application/backend/Cargo.toml'
-  #     - name: Upload to codecov.io
-  #       uses: codecov/codecov-action@v1.0.2
-  #       with:
-  #         token: ${{secrets.CODECOV_TOKEN}}
-  #     - name: Archive code coverage results
-  #       uses: actions/upload-artifact@v1
-  #       with:
-  #         name: code-coverage-report
-  #         path: cobertura.xml
+  docker-build-and-publish-production:
+    environment:
+      name: showcase-production
+    name: Docker Build and Publish Production
+    needs: docker-build-and-publish-stage
+    defaults:
+      run:
+        working-directory: ./application/backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Build
+        uses: docker/build-push-action@v4
+        with:
+          context: ./application/backend
+          load: true
+          push: false
+          tags: backend:v0.1.0
+      - name: Push to ECR
+        id: push-to-ecr
+        uses: jwalton/gh-ecr-push@v1
+        with:
+          access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.ECR_AWS_ACCESS_KEY_SECRET }}
+          region: us-east-2
+          local-image: backend:v0.1.0
+          image: backend:v0.1.0
 
-  # cargo_bloat:
-  #   defaults:
-  #     run:
-  #       working-directory: ./application/backend
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Install Rust
-  #       uses: actions-rs/toolchain@v1
-  #       with:
-  #         toolchain: stable
-  #     - name: Run cargo bloat
-  #       uses: orf/cargo-bloat-action@v1
-  #       with:
-  #         token: ${{ secrets.GITHUB_TOKEN }}
+  code-coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run cargo-tarpaulin
+        run: env
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: Run cargo-tarpaulin
+        uses: actions-rs/tarpaulin@v0.1.3
+        with:
+          version: '0.15.0'
+          args: '--root ${{ github.workspace }}/application/backend --manifest-path ${{ github.workspace }}/application/backend/Cargo.toml'
+      - name: Upload to codecov.io
+        uses: codecov/codecov-action@v1.0.2
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v1
+        with:
+          name: code-coverage-report
+          path: cobertura.xml
