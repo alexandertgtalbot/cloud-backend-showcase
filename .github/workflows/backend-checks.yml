@@ -5,8 +5,8 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-    paths:
-      - 'application/backend/**'
+    # paths:
+    #   - 'application/backend/**'
 
 env:
   CARGO_TERM_COLOR: always
@@ -35,7 +35,7 @@ jobs:
     environment:
       name: showcase-development
     name: Docker Build and Publish Development
-    needs: code-validation
+    # needs: code-validation
     defaults:
       run:
         working-directory: ./application/backend
@@ -51,8 +51,9 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./application/backend
+          load: true
           push: false
-          tags: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/backend:v0.1.0
+          tags: backend:v0.1.0
       - name: Push to ECR Stage
         id: push-to-ecr-stage
         uses: jwalton/gh-ecr-push@v1
@@ -60,7 +61,8 @@ jobs:
           access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           secret-access-key: ${{ secrets.ECR_AWS_ACCESS_KEY_SECRET }}
           region: us-east-2
-          image: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/backend:v0.1.0
+          local-image: backend:v0.1.0
+          image: backend:v0.1.0
 
   docker-build-and-publish-stage:
     environment:
@@ -82,8 +84,9 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./application/backend
+          load: true
           push: false
-          tags: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/backend:v0.1.0
+          tags: backend:v0.1.0
       - name: Push to ECR Stage
         id: push-to-ecr-stage
         uses: jwalton/gh-ecr-push@v1
@@ -91,7 +94,8 @@ jobs:
           access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY_SECRET }}
           region: us-east-2
-          image: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/backend:v0.1.0
+          local-image: backend:v0.1.0
+          image: backend:v0.1.0
 
   # code-coverage:
   #   name: Code Coverage

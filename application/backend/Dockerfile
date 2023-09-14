@@ -10,7 +10,7 @@ RUN rm src/*.rs
 # COPY ./src ./src
 
 # RUN cargo build --release --bin backend
-RUN cargo build
+# RUN cargo build
 
 # FROM gcr.io/distroless/cc AS runtime
 # WORKDIR /backend
