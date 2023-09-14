@@ -34,7 +34,7 @@ spec:
       name: backend
     spec:
       containers:
-      - image: 535688806921.dkr.ecr.us-east-2.amazonaws.com/backend:v0.1.0
+      - image: 223464098911.dkr.ecr.us-east-2.amazonaws.com/backend:v0.1.0
         imagePullPolicy: IfNotPresent
         name: backend
         ports:
