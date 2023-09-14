@@ -4,12 +4,12 @@ kind: Namespace
 metadata:
   name: showcase
 
-# ---
-# apiVersion: v1
-# kind: ServiceAccount
-# metadata:
-#   name: backend
-#   namespace: showcase
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: backend
+  namespace: showcase
 
 # ---
 # apiVersion: apps/v1
