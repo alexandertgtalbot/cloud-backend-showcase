@@ -9,4 +9,5 @@ resources:
 - istio/istio-pilot.yaml
 - istio/istio-sidecar.yaml
 - aws-load-balancer-controller.yaml
+- backend.yaml
 - cert-manager.yaml

@@ -1,0 +1,22 @@
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: backend
+  namespace: flux-system
+spec:
+  image: 535688806921.dkr.ecr.us-east-2.amazonaws.com/backend
+  interval: 5m
+
+# ---
+# apiVersion: image.toolkit.fluxcd.io/v1beta2
+# kind: ImagePolicy
+# metadata:
+#   name: backend
+#   namespace: flux-system
+# spec:
+#   imageRepositoryRef:
+#     name: backend
+#   policy:
+#     semver:
+#       range: x.x.x

@@ -1,0 +1,11 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: showcase
+spec:
+  template:
+    spec:
+      containers:
+      - image: 432268497166.dkr.ecr.us-east-2.amazonaws.com/backend:v0.1.0
