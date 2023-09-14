@@ -11,38 +11,41 @@ metadata:
   name: backend
   namespace: showcase
 
-# ---
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: backend
-#   namespace: showcase
-# spec:
-#   replicas: 3
-#   strategy:
-#     type: Recreate
-#   selector:
-#     matchLabels:
-#       app: backend
-#   template:
-#     metadata:
-#       labels:
-#         app: backend
-#       name: backend
-#     spec:
-#       containers:
-#         image: alexandertgtalbot/backend:0.1.0
-#         imagePullPolicy: IfNotPresent
-#         name: backend
-#         ports:
-#         - containerPort: 8080
-#           name: http
-#           protocol: TCP
-#         resources:
-#           requests:
-#             cpu: 2
-#             memory: 1Gi
-#       serviceAccountName: backend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: showcase
+spec:
+  replicas: 4
+  strategy:
+    maxUnavailable:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+      name: backend
+    spec:
+      containers:
+        image: 535688806921.dkr.ecr.us-east-2.amazonaws.com/backend:v0.1.0
+        imagePullPolicy: IfNotPresent
+        name: backend
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 1
+            memory: 1Gi
+      serviceAccountName: backend
 
 # ---
 # apiVersion: v1
