@@ -4,3 +4,13 @@
 
 # Cloud Backend Showcase
 A Rust-Based RESTful API, cloud infrastructure and CI/CD Showcase.
+
+# Automation
+## AWS
+### Organisation Overview
+
+![AWS Multi-Account Organization](./docs/diagram/aws-organisation.drawio.png)
+
+### Account Overview
+
+![AWS Account Deployment Overview](./docs/diagram/aws-account.drawio.png)
