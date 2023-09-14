@@ -9,3 +9,4 @@ spec:
     spec:
       containers:
       - image: 535688806921.dkr.ecr.us-east-2.amazonaws.com/backend:v0.1.0
+        name: backend
