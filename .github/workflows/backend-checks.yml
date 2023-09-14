@@ -31,47 +31,11 @@ jobs:
   #     run: cargo audit
   #     continue-on-error: true
 
-  # docker-build-and-publish-development:
-  #   environment:
-  #     name: showcase-development
-  #   name: Docker Build and Publish Development
-  #   needs: code-validation
-  #   defaults:
-  #     run:
-  #       working-directory: ./application/backend
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #     - name: Set up QEMU
-  #       uses: docker/setup-qemu-action@v2
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v2
-  #     # - name: Login to Docker Hub
-  #     #   uses: docker/login-action@v2
-  #     #   with:
-  #     #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #     #     password: ${{ secrets.DOCKERHUB_TOKEN }}
-  #     - name: Build
-  #       uses: docker/build-push-action@v4
-  #       with:
-  #         context: ./application/backend
-  #         push: false
-  #         tags: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/backend:v0.1.0
-  #     - name: Push to ECR Stage
-  #       id: push-to-ecr-stage
-  #       uses: jwalton/gh-ecr-push@v1
-  #       with:
-  #         access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
-  #         secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY_SECRET }}
-  #         region: us-east-2
-  #         image: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/backend:v0.1.0
-
-  docker-build-and-publish-stage:
+  docker-build-and-publish-development:
     environment:
-      name: showcase-stage
-    name: Docker Build and Publish Stage
-    # needs: docker-build-and-publish-development
+      name: showcase-development
+    name: Docker Build and Publish Development
+    needs: code-validation
     defaults:
       run:
         working-directory: ./application/backend
@@ -83,11 +47,37 @@ jobs:
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      # - name: Login to Docker Hub
-      #   uses: docker/login-action@v2
-      #   with:
-      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build
+        uses: docker/build-push-action@v4
+        with:
+          context: ./application/backend
+          push: false
+          tags: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/backend:v0.1.0
+      - name: Push to ECR Stage
+        id: push-to-ecr-stage
+        uses: jwalton/gh-ecr-push@v1
+        with:
+          access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.ECR_AWS_ACCESS_KEY_SECRET }}
+          region: us-east-2
+          image: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/backend:v0.1.0
+
+  docker-build-and-publish-stage:
+    environment:
+      name: showcase-stage
+    name: Docker Build and Publish Stage
+    needs: docker-build-and-publish-development
+    defaults:
+      run:
+        working-directory: ./application/backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
       - name: Build
         uses: docker/build-push-action@v4
         with:
