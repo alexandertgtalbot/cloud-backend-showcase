@@ -63,22 +63,22 @@ spec:
   selector:
     app: backend
 
-# ---
-# apiVersion: networking.istio.io/v1beta1
-# kind: VirtualService
-# metadata:
-#   name: backend
-#   namespace: showcase
-# spec:
-#   gateways:
-#   - default
-#   hosts:
-#   - backend.showcase.domain.com
-#   tcp:
-#   - match:
-#     - port: 80
-#     route:
-#     - destination:
-#         host: backend.showcase.svc.cluster.local
-#         port:
-#           number: 8080
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: backend
+  namespace: showcase
+spec:
+  gateways:
+  - default
+  hosts:
+  - backend.showcase.domain.com
+  tcp:
+  - match:
+    - port: 80
+    route:
+    - destination:
+        host: backend.showcase.svc.cluster.local
+        port:
+          number: 8080
