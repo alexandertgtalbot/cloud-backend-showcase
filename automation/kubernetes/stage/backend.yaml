@@ -4,78 +4,78 @@ kind: Namespace
 metadata:
   name: showcase
 
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: backend
-  namespace: showcase
+# ---
+# apiVersion: v1
+# kind: ServiceAccount
+# metadata:
+#   name: backend
+#   namespace: showcase
 
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: backend
-  namespace: showcase
-spec:
-  replicas: 3
-  strategy:
-    type: Recreate
-  selector:
-    matchLabels:
-      app: backend
-  template:
-    metadata:
-      labels:
-        app: backend
-      name: backend
-    spec:
-      containers:
-        image: alexandertgtalbot/backend:0.1.0
-        imagePullPolicy: IfNotPresent
-        name: backend
-        ports:
-        - containerPort: 8080
-          name: http
-          protocol: TCP
-        resources:
-          requests:
-            cpu: 2
-            memory: 1Gi
-      serviceAccountName: backend
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: backend
+#   namespace: showcase
+# spec:
+#   replicas: 3
+#   strategy:
+#     type: Recreate
+#   selector:
+#     matchLabels:
+#       app: backend
+#   template:
+#     metadata:
+#       labels:
+#         app: backend
+#       name: backend
+#     spec:
+#       containers:
+#         image: alexandertgtalbot/backend:0.1.0
+#         imagePullPolicy: IfNotPresent
+#         name: backend
+#         ports:
+#         - containerPort: 8080
+#           name: http
+#           protocol: TCP
+#         resources:
+#           requests:
+#             cpu: 2
+#             memory: 1Gi
+#       serviceAccountName: backend
 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: backend
-  namespace: showcase
-spec:
-  ports:
-    - name: http
-      protocol: TCP
-      port: 8080
-      targetPort: 8080
-  type: ClusterIP
-  selector:
-    app: backend
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: backend
+#   namespace: showcase
+# spec:
+#   ports:
+#     - name: http
+#       protocol: TCP
+#       port: 8080
+#       targetPort: 8080
+#   type: ClusterIP
+#   selector:
+#     app: backend
 
----
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: backend
-  namespace: showcase
-spec:
-  gateways:
-  - default
-  hosts:
-  - backend.showcase.domain.com
-  tcp:
-  - match:
-    - port: 80
-    route:
-    - destination:
-        host: backend.showcase.svc.cluster.local
-        port:
-          number: 8080
+# ---
+# apiVersion: networking.istio.io/v1beta1
+# kind: VirtualService
+# metadata:
+#   name: backend
+#   namespace: showcase
+# spec:
+#   gateways:
+#   - default
+#   hosts:
+#   - backend.showcase.domain.com
+#   tcp:
+#   - match:
+#     - port: 80
+#     route:
+#     - destination:
+#         host: backend.showcase.svc.cluster.local
+#         port:
+#           number: 8080
