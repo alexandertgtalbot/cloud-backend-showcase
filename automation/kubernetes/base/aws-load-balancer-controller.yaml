@@ -54,5 +54,5 @@ spec:
     replicaCount: 1
     serviceAccount:
       annotations:
-        eks.amazonaws.com/role-arn: arn:aws:iam::531470700410:role/aws-service-role/elasticloadbalancing.amazonaws.com/AWSServiceRoleForElasticLoadBalancing
+        eks.amazonaws.com/role-arn: arn:aws:iam::223464098911:role/aws-service-role/elasticloadbalancing.amazonaws.com/AWSServiceRoleForElasticLoadBalancing
         # calm.the.masses: https://www.lastweekinaws.com/blog/are-aws-account-ids-sensitive-information/
