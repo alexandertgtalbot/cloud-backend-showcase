@@ -31,11 +31,44 @@ jobs:
   #     run: cargo audit
   #     continue-on-error: true
 
-  docker-build-and-publish-development:
+  # docker-build-and-publish-development:
+  #   environment:
+  #     name: showcase-development
+  #   name: Docker Build and Publish Development
+  #   # needs: code-validation
+  #   defaults:
+  #     run:
+  #       working-directory: ./application/backend
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #     - name: Set up QEMU
+  #       uses: docker/setup-qemu-action@v2
+  #     - name: Set up Docker Buildx
+  #       uses: docker/setup-buildx-action@v2
+  #     - name: Build
+  #       uses: docker/build-push-action@v4
+  #       with:
+  #         context: ./application/backend
+  #         load: true
+  #         push: false
+  #         tags: backend:v0.1.0
+  #     - name: Push to ECR
+  #       id: push-to-ecr
+  #       uses: jwalton/gh-ecr-push@v1
+  #       with:
+  #         access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+  #         secret-access-key: ${{ secrets.ECR_AWS_ACCESS_KEY_SECRET }}
+  #         region: us-east-2
+  #         local-image: backend:v0.1.0
+  #         image: backend:v0.1.0
+
+  docker-build-and-publish-stage:
     environment:
-      name: showcase-development
-    name: Docker Build and Publish Development
-    # needs: code-validation
+      name: showcase-stage
+    name: Docker Build and Publish Stage
+    # needs: docker-build-and-publish-development
     defaults:
       run:
         working-directory: ./application/backend
@@ -64,71 +97,38 @@ jobs:
           local-image: backend:v0.1.0
           image: backend:v0.1.0
 
-  docker-build-and-publish-stage:
-    environment:
-      name: showcase-stage
-    name: Docker Build and Publish Stage
-    needs: docker-build-and-publish-development
-    defaults:
-      run:
-        working-directory: ./application/backend
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Build
-        uses: docker/build-push-action@v4
-        with:
-          context: ./application/backend
-          load: true
-          push: false
-          tags: backend:v0.1.0
-      - name: Push to ECR
-        id: push-to-ecr
-        uses: jwalton/gh-ecr-push@v1
-        with:
-          access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
-          secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY_SECRET }}
-          region: us-east-2
-          local-image: backend:v0.1.0
-          image: backend:v0.1.0
-
-  docker-build-and-publish-production:
-    environment:
-      name: showcase-production
-    name: Docker Build and Publish Production
-    needs: docker-build-and-publish-stage
-    defaults:
-      run:
-        working-directory: ./application/backend
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Build
-        uses: docker/build-push-action@v4
-        with:
-          context: ./application/backend
-          load: true
-          push: false
-          tags: backend:v0.1.0
-      - name: Push to ECR
-        id: push-to-ecr
-        uses: jwalton/gh-ecr-push@v1
-        with:
-          access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
-          secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY_SECRET }}
-          region: us-east-2
-          local-image: backend:v0.1.0
-          image: backend:v0.1.0
+  # docker-build-and-publish-production:
+  #   environment:
+  #     name: showcase-production
+  #   name: Docker Build and Publish Production
+  #   needs: docker-build-and-publish-stage
+  #   defaults:
+  #     run:
+  #       working-directory: ./application/backend
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #     - name: Set up QEMU
+  #       uses: docker/setup-qemu-action@v2
+  #     - name: Set up Docker Buildx
+  #       uses: docker/setup-buildx-action@v2
+  #     - name: Build
+  #       uses: docker/build-push-action@v4
+  #       with:
+  #         context: ./application/backend
+  #         load: true
+  #         push: false
+  #         tags: backend:v0.1.0
+  #     - name: Push to ECR
+  #       id: push-to-ecr
+  #       uses: jwalton/gh-ecr-push@v1
+  #       with:
+  #         access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+  #         secret-access-key: ${{ secrets.ECR_AWS_ACCESS_KEY_SECRET }}
+  #         region: us-east-2
+  #         local-image: backend:v0.1.0
+  #         image: backend:v0.1.0
 
   # code-coverage:
   #   name: Code Coverage
