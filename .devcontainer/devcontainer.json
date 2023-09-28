@@ -4,7 +4,6 @@
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
 	"workspaceFolder": "/workspace",
-	// "remoteUser": "vscode",
 	"customizations": {
 		"vscode": {
 			"settings": {
@@ -13,12 +12,44 @@
 					"zsh": {
 						"path": "/bin/zsh"
 					}
-				}
-			}
+				},
+				"[rust]": {
+					"editor.defaultFormatter": "rust-lang.rust-analyzer",
+					"editor.formatOnSave": true,
+					"editor.formatOnSaveMode": "file"
+				},
+				"explorer.confirmDragAndDrop": false,
+				"editor.inlineSuggest.enabled": true,
+				"editor.inlayHints.enabled": "on",
+				"terraform.experimentalFeatures.validateOnSave": true,
+				"terraform.experimentalFeatures.prefillRequiredFields": true,
+				"[terraform]": {
+					"editor.defaultFormatter": "hashicorp.terraform",
+					"editor.formatOnSave": true,
+					"editor.formatOnSaveMode": "file"
+				},
+				"[terraform-vars]": {
+					"editor.defaultFormatter": "hashicorp.terraform",
+					"editor.formatOnSave": true,
+					"editor.formatOnSaveMode": "file"
+				},
+				"terraform.codelens.referenceCount": true,
+				"editor.formatOnSave": true,
+				"editor.defaultFormatter": "hashicorp.hcl"
+			},
+			"extensions": [
+				"streetsidesoftware.code-spell-checker",
+				"hashicorp.hcl",
+				"hashicorp.terraform",
+				"GitHub.copilot",
+				"GitHub.copilot-chat",
+				"rust-lang.rust-analyzer"
+			]
 		}
 	},
 	"mounts": [
 		"source=~/.aws,target=/root/.aws,type=bind,consistency=cached",
+		"source=~/.config,target=/root/.config,type=bind,consistency=cached",
 		"source=~/.ssh,target=/root/.ssh,type=bind,consistency=cached",
 		"source=${localEnv:HOME}${localEnv:USERPROFILE}\\.profile,target=/root/.profile,type=bind,consistency=cached",
 		"source=${localEnv:HOME}${localEnv:USERPROFILE}\\.zshrc,target=/root/.zshrc,type=bind,consistency=cached"

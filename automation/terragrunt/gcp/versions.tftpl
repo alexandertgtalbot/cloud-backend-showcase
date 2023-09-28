@@ -1,0 +1,18 @@
+terraform {
+  required_providers {
+    gcp = {
+      source  = "hashicorp/google"
+      version = "= ${args.provider_version.gcp}"
+    }
+    null = {
+      source  = "hashicorp/null"
+      version = "= ${args.provider_version.null}"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "= ${args.provider_version.random}"
+    }
+  }
+
+  required_version = "= ${args.terraform_version}"
+}

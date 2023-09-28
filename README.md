@@ -11,6 +11,13 @@ A Rust-Based RESTful API, cloud infrastructure and CI/CD Showcase.
 
 ![AWS Multi-Account Organization](./docs/diagram/aws-organisation.drawio.png)
 
+**Figure 1** - AWS Organization overview modelling an approach to multi-account deployments.
+
 ### Account Overview
 
 ![AWS Account Deployment Overview](./docs/diagram/aws-account.drawio.png)
+
+
+## GCP
+### Bootstrap
+Bootstrap using your OAuth identity: ```gcloud init```

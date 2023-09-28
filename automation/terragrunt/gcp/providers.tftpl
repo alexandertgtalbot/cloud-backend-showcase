@@ -1,0 +1,34 @@
+provider "google" {
+  # access_token = var.gcp_access_token
+  region       = "${args.region}"
+  # zone         = "us-east1-a"
+}
+
+
+%{ if can(args.eks) }
+provider "kubernetes" {
+  host                   = "${args.eks.cluster_endpoint}"
+  cluster_ca_certificate = base64decode("${args.eks.cluster_certificate_authority_data}")
+
+  exec {
+    command     = "aws"
+    api_version = "client.authentication.k8s.io/v1beta1"
+    args = ["eks", "get-token", "--cluster-name", "${args.eks.cluster_name}", "--role-arn", "${args.iam_role}"]
+  }
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = "${args.eks.cluster_endpoint}"
+    cluster_ca_certificate = base64decode("${args.eks.cluster_certificate_authority_data}")
+
+    exec {
+      api_version = "client.authentication.k8s.io/v1beta1"
+      command     = "aws"
+      args = ["eks", "get-token", "--cluster-name", "${args.eks.cluster_name}", "--role-arn", "${args.iam_role}"]
+    }
+  }
+}
+%{~ endif }
+
+provider "random" {}
